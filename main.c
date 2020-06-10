@@ -23,7 +23,8 @@ const int SIGNAL = 2;
 ISR(WDT_vect) {
     WDTCR |= _BV( WDIE );
     cntISR++;
-    if( cntISR == 2400 )
+    // Stay asleep for 4 hours
+    if( cntISR == 3200 )
         cntISR = 0;
 }
  
@@ -47,7 +48,11 @@ void config_watchdog( )
     cli();
     wdt_reset();
     WDTCR |= (1<<WDCE)|(1<<WDE);
-    WDTCR |= (1<<WDIE)|(1<<WDE)|(1<<WDP3)|(1<<WDP0);
+
+    // Set Watchodg Timer to 8 seconds
+    //WDTCR |= (1<<WDIE)|(1<<WDE)|(1<<WDP3)|(1<<WDP0);
+    // Set watchdog timer to 4 seconds
+    WDTCR |= (1<<WDIE)|(1<<WDE)|(1<<WDP3);
     sei();
 }
 
@@ -76,8 +81,8 @@ int main( int argc, char **argv )
         {
                 SET_LED_ON();
                 SET_SIGNAL_ON();
-                // Leave the signal ON for one period
-                while( cntISR < 1 );
+                // Leave the signal ON for 12 seconds
+                while( cntISR < 3 );
                 SET_SIGNAL_OFF();
                 SET_LED_OFF();
         }
